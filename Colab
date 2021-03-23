@@ -1,0 +1,20 @@
+from google.colab import drive
+drive.mount('/content/gdrive')
+
+!nvidia-smi
+
+import os
+os.environ['PATH'] += ':/usr/local/cuda/bin'
+!rm -fr darknet
+!git clone https://github.com/AlexeyAB/darknet/
+
+!apt install gcc-5 g++-5 -y
+!ln -s /usr/bin/gcc-5 /usr/local/cuda/bin/gcc 
+!ln -s /usr/bin/g++-5 /usr/local/cuda/bin/g++
+
+!sed -i 's/GPU=0/GPU=1/g' Makefile
+!sed -i 's/CUDNN=0/CUDNN=1/g' Makefile
+!sed -i 's/OPENCV=0/OPENCV=1/g' Makefile
+!make
+
+!./darknet detector train yolov3custom.data yolov3custom.cfg darknet53.conv.74 -dont_show 
